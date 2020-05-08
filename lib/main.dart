@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:travel_booking/home.dart';
+import 'package:travel_booking/screens/home.dart';
 
 void main() => runApp(MyApp());
 
