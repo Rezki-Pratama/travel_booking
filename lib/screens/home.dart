@@ -1,11 +1,14 @@
 import 'dart:async';
-
+import 'package:hive/hive.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:travel_booking/providers/login_provider.dart';
 import 'package:travel_booking/utilities/app_style.dart';
 import 'package:travel_booking/widgets/circle_button.dart';
 import 'package:travel_booking/widgets/custom_textfield.dart';
+import 'package:travel_booking/models/hive/auth.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -26,6 +29,22 @@ class _LoginState extends State<Login> {
         _autoValidate = true;
       });
     }
+  }
+
+  saveDio() async {
+    var data = Provider.of<LoginProvider>(context, listen: false).login.data;
+    var authBox = Hive.box('auth');
+    authBox.add(Auth(data.id, data.name, data.email, data.roles, data.username,
+        data.emailVerifiedAt));
+
+   
+    // Auth auth = authBox.getAt(0);
+    // print(auth.email);
+  }
+
+  clearDio() {
+    var authBox = Hive.box('auth');
+    authBox.deleteAt(1);
   }
 
   @override
@@ -62,8 +81,8 @@ class _LoginState extends State<Login> {
                         children: <Widget>[
                           SizedBox(
                               height: (animation == 1)
-                                  ? MediaQuery.of(context).size.width * 0.4
-                                  : MediaQuery.of(context).size.width * 0.6),
+                                  ? MediaQuery.of(context).size.height * 0.2
+                                  : MediaQuery.of(context).size.height * 0.3),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -111,8 +130,11 @@ class _LoginState extends State<Login> {
                       Align(
                         alignment: Alignment.bottomRight,
                         child: Padding(
-                            padding: const EdgeInsets.only(
-                                bottom: 70.0, right: 40.0, left: 25),
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).size.height * 0.1,
+                                right: MediaQuery.of(context).size.width * 0.1,
+                                left: MediaQuery.of(context).size.width * 0.1),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
@@ -139,6 +161,10 @@ class _LoginState extends State<Login> {
                                   child: RawMaterialButton(
                                     onPressed: () {
                                       check();
+                                      Provider.of<LoginProvider>(context,
+                                              listen: false)
+                                          .getLoginProvider();
+                                      saveDio();
                                     },
                                     child: Container(
                                         width:
